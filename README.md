@@ -1,6 +1,6 @@
 # DeepResearchAgent Crew
 
-Welcome to the DeepResearchAgent Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+Deep Research Agent is an AI-powered agent, powered by [crewAI](https://crewai.com), designed for conducting in-depth research. It leverages multi-agent collaboration to gather, analyze, and summarize information from various sources, helping users find valuable insights efficiently. Ideal for researchers, developers, and analysts who need thorough and structured information retrieval.
 
 ## Installation
 

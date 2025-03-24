@@ -1,10 +1,15 @@
 #!/usr/bin/env python
+import os
 import sys
 import warnings
 
 from datetime import datetime
 
 from deep_research_agent.crew import DeepResearchAgent
+import  deep_research_agent.config as config
+
+# Init tracing to Phoenix
+config.init_trace()
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
@@ -17,13 +22,17 @@ def run():
     """
     Run the crew.
     """
+    topic = os.getenv('TOPIC', 'AI Agent Trends')
+    result_file = os.getenv('RESULT_FILE', 'result/report.md')
     inputs = {
-        'topic': 'AI LLMs',
+        'topic': topic,
         'current_year': str(datetime.now().year)
     }
     
     try:
-        DeepResearchAgent().crew().kickoff(inputs=inputs)
+        agent = DeepResearchAgent(result_file=result_file).crew()
+        result = agent.kickoff(inputs=inputs)
+        print(f"Final result:\n {result}")
     except Exception as e:
         raise Exception(f"An error occurred while running the crew: {e}")
 
