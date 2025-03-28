@@ -37,7 +37,7 @@ def step_callback(x):
 
 def task_callback(x):
     if isinstance(x, TaskOutput):
-        with st.expander("🏁 Task Output"):
+        with st.expander(f"🏁 Task Output - {x.agent} - {x.name}"):
             st.write(x)
     else:
         with st.expander(f"Unhandled Step Type: {type(x)}"):
@@ -75,6 +75,10 @@ def response():
         st.json(json.loads(results.raw))
     else:
         st.markdown(results.raw)
+    
+    # if st.button("📋 Copy to Clipboard", key="copy_result"):
+    #     st.session_state.clipboard = results.raw
+    #     st.success("Result copied to clipboard!")
 
     with st.expander("🔍 Full Output"):
         st.write(results)

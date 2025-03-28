@@ -1,44 +1,16 @@
-define_research_scope_task:
-  description: >
-    Based on the initial topic "{topic}", clarify the core research question(s), define the desired scope
-    and depth (e.g., historical overview, current state, future trends, specific aspects). Break down the
-    main topic into 3-5 specific sub-questions or areas of focus for the search agents. Define the 
-    expected structure of the final report.
-  expected_output: >
-    A structured research plan document including: clarified main research question(s), list of specific 
-    sub-questions/areas to investigate, keywords and potential search angles for each sub-question, 
-    definition of the desired output format and key sections for the final report.
-  agent: research_manager
-
 web_information_gathering_task:
   description: >
     Using the research plan, search the general web for information relevant to the specified sub-questions.
     Focus on finding diverse perspectives, blogs, forums, news articles, and potentially primary sources
     available online. Summarize key findings and provide URLs for each relevant source.
+    Use time period: {today}.
+    Use the same language and country as the topic: "{topic}".
   expected_output: >
-    A list containing for each relevant source: URL, brief summary (1-2 sentences), potentially relevant 
-    quotes or data points extracted, organized by sub-question if possible.
+    A detailed result for each relevant source, including: URL, comprehensive summary (covering key points, arguments, or data), 
+    relevant quotes or data points extracted,
+    and an explanation of how the source contributes to answering the sub-questions, 
+    organized by sub-question if possible.
   agent: web_search_specialist
-
-academic_literature_search_task:
-  description: >
-    Using the research plan, search academic databases and repositories for scholarly articles, papers,
-    and established research relevant to the sub-questions. Prioritize peer-reviewed sources. Provide
-    abstracts or key findings summaries, DOIs/links, and author/publication details.
-  expected_output: >
-    A list containing for each relevant academic source: Title, Authors, Publication/Journal, Year, 
-    DOI/Link, Abstract or concise summary of key findings/arguments, organized by sub-question if possible.
-  agent: academic_researcher
-
-news_reports_search_task:
-  description: >
-    Using the research plan, search news archives, government websites, NGO databases, and industry 
-    publications for relevant articles, reports, datasets, and policy documents related to the sub-questions.
-    Note the publication date and source perspective/potential bias.
-  expected_output: >
-    A list containing for each relevant source: Title/Headline, Source Name, Publication Date, URL/Link, 
-    Brief summary, note on source type/perspective, organized by sub-question if possible.
-  agent: news_reports_analyst
 
 source_evaluation_task:
   description: >
@@ -60,23 +32,21 @@ synthesize_findings_task:
     A structured document containing synthesized key findings organized logically, identification of patterns,
     trends, contradictions, summary of evidence supporting each point (with references to specific sources),
     and highlighting of knowledge gaps or areas needing further research.
+    Use time period: {today}.
+    Use the same language and country as the topic: "{topic}".
   agent: research_synthesizer
 
 compile_report_task:
   description: >
     Using the structured synthesis and the list of evaluated sources, write a comprehensive and polished
     research report. Follow the structure defined in the research plan. Ensure clear language, logical flow,
-    and accurate citations for all claims, referencing the evaluated sources.
+    and accurate citations for all claims, referencing the evaluated sources.        
   expected_output: >
     The final, well-formatted research report addressing the initial topic comprehensively, based on evaluated evidence.
-    Include Title, Executive Summary, Introduction/Background/Scope, Detailed Findings (with citations),
-    Conclusion/Summary of Key Insights/Knowledge Gaps, and Bibliography.
-  agent: report_writer
+      Include Title, Executive Summary, Introduction/Background/Scope, Detailed Findings (with citations),
+      Conclusion/Summary of Key Insights/Knowledge Gaps, and Bibliography.
+      Use tables extensively to represent comparative data, highlight key points, and summarize findings wherever applicable.        
+      Use time period: {today}.
 
-final_review_task:
-  description: >
-    Review the final report against the original Research Plan. Check for completeness (were all sub-questions addressed?),
-    accuracy (does the report accurately reflect the synthesis?), clarity, and overall quality. Ensure citations are present.
-  expected_output: >
-    The approved final research report, possibly with minor edits or a note confirming it meets the requirements.
-  agent: research_manager
+      Use the same language and country as the topic: "{topic}".
+  agent: report_writer

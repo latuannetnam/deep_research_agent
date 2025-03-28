@@ -19,8 +19,8 @@ header()
 # sidebar()
 input_form()
 
-if st.session_state.instructions and st.session_state.llm_id:
+if st.session_state.instructions:
     with st.spinner("Processing...", show_time=True):
-        response()
+        response()       
 
 footer()

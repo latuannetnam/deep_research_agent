@@ -22,11 +22,11 @@ def run(request, step_callback=None, task_callback=None):
         "today": datetime.today().strftime("%Y-%m-%d"),
     }
 
-    result_file = os.getenv('RESULT_FILE', 'result/report.md')
+    result_dir = os.getenv('RESULT_DIR', 'result')
 
     try:
         return (
-            DeepResearchAgent(result_file=result_file)
+            DeepResearchAgent(result_dir=result_dir)
             .crew(step_callback=step_callback, task_callback=task_callback)
             .kickoff(inputs=inputs)
         )
