@@ -10,7 +10,8 @@ dependencies = [
     "arize-phoenix-otel",
     "openinference-instrumentation-crewai",
     "openinference-instrumentation-litellm",
-    "tavily-python" 
+    "tavily-python",
+    "streamlit" 
 ]
 
 [project.scripts]

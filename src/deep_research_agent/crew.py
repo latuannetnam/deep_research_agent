@@ -7,17 +7,10 @@ from deep_research_agent.tools.tavily_tool import TavilySearchTool
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
-# If you want to run a snippet of code before or after the crew starts, 
-# you can use the @before_kickoff and @after_kickoff decorators
-# https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
-
 @CrewBase
 class DeepResearchAgent():
-	"""DeepResearchAgent crew"""
+	"""DeepResearchAgent crew - Deep research on a given topic"""
 
-	# Learn more about YAML configuration files here:
-	# Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
-	# Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
 	agents_config = 'config/agents.yaml'
 	tasks_config = 'config/tasks.yaml'
 
@@ -26,8 +19,6 @@ class DeepResearchAgent():
 		self.MAX_ITER = int(os.getenv('MAX_ITER', 5))
 		self.VERBOSE = os.getenv('VERBOSE', 'true').lower() == 'true'
 		self.TAVILY_API_KEY = os.getenv('TAVILY_API_KEY', None)
-		# Initialize the tool
-		# self.code_interpreter = CodeInterpreterTool()
 		self.tavily_search_tool = TavilySearchTool(api_key=self.TAVILY_API_KEY)
 		self.result_file = result_file
 
@@ -51,55 +42,135 @@ class DeepResearchAgent():
 		
 		return llm
 
-	# If you would like to add tools to your agents, you can learn more about it here:
-	# https://docs.crewai.com/concepts/agents#agent-tools
+	# Agent definitions
 	@agent
-	def researcher(self) -> Agent:
+	def research_manager(self) -> Agent:
 		return Agent(
-			config=self.agents_config['researcher'],
+			config=self.agents_config['research_manager'],
 			llm=self.llm,
-            max_iter=self.MAX_ITER,			
-            verbose=self.VERBOSE
+			max_iter=self.MAX_ITER,
+			verbose=self.VERBOSE
 		)
 
 	@agent
-	def reporting_analyst(self) -> Agent:
+	def web_search_specialist(self) -> Agent:
 		return Agent(
-			config=self.agents_config['reporting_analyst'],
+			config=self.agents_config['web_search_specialist'],
 			llm=self.llm,
-            max_iter=self.MAX_ITER,
-            verbose=self.VERBOSE
+			max_iter=self.MAX_ITER,
+			verbose=self.VERBOSE,
+			tools=[self.tavily_search_tool]
 		)
 
-	# To learn more about structured task outputs, 
-	# task dependencies, and task callbacks, check out the documentation:
-	# https://docs.crewai.com/concepts/tasks#overview-of-a-task
+	@agent
+	def academic_researcher(self) -> Agent:
+		return Agent(
+			config=self.agents_config['academic_researcher'],
+			llm=self.llm,
+			max_iter=self.MAX_ITER,
+			verbose=self.VERBOSE,
+			tools=[self.tavily_search_tool]
+		)
+
+	@agent
+	def news_reports_analyst(self) -> Agent:
+		return Agent(
+			config=self.agents_config['news_reports_analyst'],
+			llm=self.llm,
+			max_iter=self.MAX_ITER,
+			verbose=self.VERBOSE,
+			tools=[self.tavily_search_tool]
+		)
+
+	@agent
+	def source_evaluator(self) -> Agent:
+		return Agent(
+			config=self.agents_config['source_evaluator'],
+			llm=self.llm,
+			max_iter=self.MAX_ITER,
+			verbose=self.VERBOSE
+		)
+
+	@agent
+	def research_synthesizer(self) -> Agent:
+		return Agent(
+			config=self.agents_config['research_synthesizer'],
+			llm=self.llm,
+			max_iter=self.MAX_ITER,
+			verbose=self.VERBOSE
+		)
+
+	@agent
+	def report_writer(self) -> Agent:
+		return Agent(
+			config=self.agents_config['report_writer'],
+			llm=self.llm,
+			max_iter=self.MAX_ITER,
+			verbose=self.VERBOSE
+		)
+
+	# Task definitions
 	@task
-	def research_task(self) -> Task:
+	def define_research_scope_task(self) -> Task:
 		return Task(
-			config=self.tasks_config['research_task'],
-			tools=[self.tavily_search_tool], # Add the tool to the agent
+			config=self.tasks_config['define_research_scope_task']
 		)
 
 	@task
-	def reporting_task(self) -> Task:
+	def web_information_gathering_task(self) -> Task:
 		return Task(
-			config=self.tasks_config['reporting_task'],
+			config=self.tasks_config['web_information_gathering_task'],
+			tools=[self.tavily_search_tool]
+		)
+
+	@task
+	def academic_literature_search_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['academic_literature_search_task'],
+			tools=[self.tavily_search_tool]
+		)
+
+	@task
+	def news_reports_search_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['news_reports_search_task'],
+			tools=[self.tavily_search_tool]
+		)
+
+	@task
+	def source_evaluation_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['source_evaluation_task']
+		)
+
+	@task
+	def synthesize_findings_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['synthesize_findings_task']
+		)
+
+	@task
+	def compile_report_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['compile_report_task'],
 			output_file=self.result_file
 		)
 
-	@crew
-	def crew(self) -> Crew:
-		"""Creates the DeepResearchAgent crew"""
-		# To learn how to add knowledge sources to your crew, check out the documentation:
-		# https://docs.crewai.com/concepts/knowledge#what-is-knowledge
+	@task
+	def final_review_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['final_review_task']
+		)
 
+	@crew
+	def crew(self, step_callback=None, task_callback=None) -> Crew:
+		"""Creates the DeepResearchAgent crew for comprehensive topic research"""
 		return Crew(
-			agents=self.agents, # Automatically created by the @agent decorator
-			tasks=self.tasks, # Automatically created by the @task decorator
-			# process=Process.sequential,
-			process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
+			agents=self.agents,
+			tasks=self.tasks,
+			process=Process.sequential,  # Sequential process as this is a structured research workflow
 			manager_llm=self.llm,
-            verbose=self.VERBOSE,
-			
+			verbose=self.VERBOSE,
+			step_callback=step_callback,
+			task_callback=task_callback
 		)

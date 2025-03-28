@@ -20,7 +20,7 @@ class TavilySearchTool(BaseTool):
         super().__init__(**kwargs)
         self.client = TavilyClient(api_key=api_key)
 
-    def _run(self, query: str, max_results=5, search_depth="basic") -> str:
+    def _run(self, query: str, max_results=5, search_depth="advanced") -> str:
         """Use the Tavily search engine to find relevant information."""
         if not self.client.api_key:
             raise ValueError("TAVILY_API_KEY environment variable not set")
