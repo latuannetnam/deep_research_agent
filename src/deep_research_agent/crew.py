@@ -4,6 +4,7 @@ import os
 from loguru import logger
 
 from deep_research_agent.tools.tavily_tool import TavilySearchTool
+from deep_research_agent.tools.current_date_tool import CurrentDateTool
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
@@ -19,7 +20,9 @@ class DeepResearchAgent():
 		self.MAX_ITER = int(os.getenv('MAX_ITER', 5))
 		self.VERBOSE = os.getenv('VERBOSE', 'true').lower() == 'true'
 		self.TAVILY_API_KEY = os.getenv('TAVILY_API_KEY', None)
+		# Tools
 		self.tavily_search_tool = TavilySearchTool(api_key=self.TAVILY_API_KEY)
+		self.current_date_tool = CurrentDateTool()
 		self.result_dir = result_dir
 
 	def load_llm_model(self):
@@ -59,7 +62,7 @@ class DeepResearchAgent():
 			llm=self.llm,
 			max_iter=self.MAX_ITER,
 			verbose=self.VERBOSE,
-			tools=[self.tavily_search_tool]
+			# tools=[self.tavily_search_tool, self.current_date_tool]
 		)
 
 	# @agent
@@ -120,7 +123,7 @@ class DeepResearchAgent():
 	def web_information_gathering_task(self) -> Task:
 		return Task(
 			config=self.tasks_config['web_information_gathering_task'],
-			tools=[self.tavily_search_tool]
+			tools=[self.tavily_search_tool, self.current_date_tool],
 		)
 
 	# @task
@@ -140,20 +143,23 @@ class DeepResearchAgent():
 	@task
 	def source_evaluation_task(self) -> Task:
 		return Task(
-			config=self.tasks_config['source_evaluation_task']
+			config=self.tasks_config['source_evaluation_task'],
+			tools=[self.current_date_tool],
 		)
 
 	@task
 	def synthesize_findings_task(self) -> Task:
 		return Task(
-			config=self.tasks_config['synthesize_findings_task']
+			config=self.tasks_config['synthesize_findings_task'],
+			tools=[self.current_date_tool],
 		)
 
 	@task
 	def compile_report_task(self) -> Task:
 		return Task(
 			config=self.tasks_config['compile_report_task'],			
-			output_file=f"{self.result_dir}/report.md"
+			output_file=f"{self.result_dir}/report.md",
+			tools=[self.current_date_tool]
 		)
 
 	# @task

@@ -20,14 +20,14 @@ class TavilySearchTool(BaseTool):
         super().__init__(**kwargs)
         self.client = TavilyClient(api_key=api_key)
 
-    def _run(self, query: str, max_results=5, search_depth="advanced") -> str:
+    def _run(self, query: str, max_results=10, search_depth="advanced") -> str:
         """Use the Tavily search engine to find relevant information."""
         if not self.client.api_key:
             raise ValueError("TAVILY_API_KEY environment variable not set")
 
         try:
             response = self.client.search(
-                query=query, max_results=max_results, search_depth=search_depth
+                query=query, max_results=max_results, search_depth=search_depth, include_answer="advanced",
             )
             return self._process_response(response)
         except Exception as e:
@@ -38,7 +38,7 @@ class TavilySearchTool(BaseTool):
             return "No results found."
 
         results = []
-        for item in response["results"][:5]:  # Limit to top 5 results
+        for item in response["results"][:10]:  # Limit to top 10 results
             title = item.get("title", "No title")
             content = item.get("content", "No content available")
             url = item.get("url", "No URL available")
