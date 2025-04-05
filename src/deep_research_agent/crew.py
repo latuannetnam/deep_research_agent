@@ -27,15 +27,19 @@ class DeepResearchAgent():
 
 	def load_llm_model(self):
 		MODEL = os.getenv("MODEL", "openai/gpt-4o-mini")
-		MODEL_TEMPERATURE = float(os.getenv("MODEL_TEMPERATURE", 0.0))
+		MODEL_TEMPERATURE = float(os.getenv("MODEL_TEMPERATURE", 1.0))
 		CONTEXT_WINDOW_SIZE = int(os.getenv("CONTEXT_WINDOW_SIZE", 0))
 		model = f"{MODEL}"
+		# temperature = 1.0, top_k = 64, top_p = 0.95, min_p = 0.0
 		logger.info(f"Loading LLM model: {model} {MODEL_TEMPERATURE} {CONTEXT_WINDOW_SIZE}")
 		if CONTEXT_WINDOW_SIZE>0:
 			llm = LLM(
 				model=model,
 				temperature=MODEL_TEMPERATURE,
-				max_tokens=CONTEXT_WINDOW_SIZE,                
+				max_tokens=CONTEXT_WINDOW_SIZE, 
+				top_p=0.95,
+				top_k=64,
+				min_p=0.0,               
 			)
 		else:
 			llm = LLM(
